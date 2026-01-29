@@ -1,0 +1,87 @@
+/* Navbar.css */
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.8rem 5%;
+  background: rgba(15, 15, 18, 0.9); /* Fondo oscuro con leve transparencia */
+  backdrop-filter: blur(10px); /* Efecto vidrio esmerilado */
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  height: 70px;
+}
+
+.nav-brand a {
+  color: var(--primary);
+  text-decoration: none;
+  font-size: 1.6rem;
+  font-weight: 900;
+  letter-spacing: -1px;
+  transition: text-shadow 0.3s ease;
+}
+
+.nav-brand a:hover {
+  text-shadow: 0 0 15px rgba(139, 92, 246, 0.6);
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+/* Contenedor para el saludo y el botón de salir */
+.user-info-block {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.user-name {
+  color: var(--text-dim);
+  font-size: 0.95rem;
+}
+
+.user-name strong {
+  color: var(--text-main);
+}
+
+/* Botón Salir (Estilo minimalista/peligro) */
+.btn-logout {
+  background: transparent;
+  color: var(--text-dim);
+  border: 1px solid var(--border);
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-logout:hover {
+  color: var(--danger);
+  border-color: var(--danger);
+  background: rgba(239, 68, 68, 0.05);
+}
+
+/* Botones de Login / Registro en el Nav */
+.btn-auth-nav {
+  color: var(--primary-hover);
+  text-decoration: none;
+  font-weight: 700;
+  padding: 8px 18px;
+  border: 1px solid var(--primary);
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+}
+
+.btn-auth-nav:hover {
+  background: var(--primary);
+  color: white;
+  box-shadow: 0 0 15px rgba(139, 92, 246, 0.4);
+}

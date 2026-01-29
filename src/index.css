@@ -1,0 +1,43 @@
+/* index.css */
+
+:root {
+  /* Tu paleta Neón unificada */
+  --bg-body: #0f0f12;
+  --bg-card: #1a1a20;
+  --bg-input: #0a0a0c;
+  --primary: #8b5cf6;       /* Violeta Neón */
+  --primary-hover: #a78bfa; /* Violeta más claro */
+  --text-main: #f8fafc;
+  --text-dim: #94a3b8;
+  --danger: #ef4444;        /* Rojo para errores/salir */
+  --border: #2d2d35;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: var(--bg-body);
+  color: var(--text-main);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Scrollbar estilo oscuro para que no desentone */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-body);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}

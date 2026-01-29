@@ -1,0 +1,218 @@
+/* --- RESET GENERAL DEL CONTENEDOR --- */
+.thread-detail-container {
+  max-width: 850px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #121212;
+  color: #e0e0e0;
+  direction: ltr !important; /* Forzamos flujo normal desde la raíz */
+}
+
+/* --- POST PRINCIPAL --- */
+.main-thread {
+  background: #1e1e1e;
+  padding: 25px;
+  border-radius: 8px;
+  margin-bottom: 30px;
+  border-left: 4px solid #6a0dad;
+}
+
+/* --- RESPUESTAS --- */
+.reply-group {
+  margin-bottom: 25px;
+  display: block;
+}
+
+.reply-card {
+  background: #252525;
+  border-radius: 8px;
+  padding: 15px 20px;
+  border: 1px solid #333;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.reply-card.nested {
+  margin-left: 40px;
+  border-left: 2px solid #6a0dad;
+}
+
+.reply-image-wrapper {
+  margin-top: 10px;
+  width: 100%;
+}
+
+.reply-attachment {
+  max-width: 100%;
+  max-height: 400px;
+  border-radius: 6px;
+  display: block;
+}
+
+/* --- FOOTER DE RESPUESTA (NOMBRE Y BOTÓN) --- */
+.reply-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #333;
+}
+
+.reply-btn-small {
+  background: #3d2b56;
+  color: white;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.reply-btn-small:hover {
+  background: #6a0dad;
+}
+
+/* --- FORMULARIO Y EL FAMOSO TEXTAREA --- */
+
+.nested-form-container {
+  margin-left: 40px;
+  margin-top: 10px;
+}
+
+.reply-form {
+  background: #1a1a1a;
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid #6a0dad;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* 🚨 AQUÍ ESTÁ EL FIX CRÍTICO PARA EL MODO ESPEJO 🚨 */
+textarea {
+  display: block !important;
+  width: 100% !important;
+  min-height: 100px;
+  background: #2a2a2a !important;
+  color: #ffffff !important;
+  border: 1px solid #444 !important;
+  border-radius: 4px;
+  padding: 12px !important;
+  box-sizing: border-box !important;
+  
+  /* Reset de dirección de texto */
+  direction: ltr !important;
+  text-align: left !important;
+  unicode-bidi: bidi-override !important;
+  
+  /* Matamos cualquier herencia de Flex que ande molestando */
+  flex: none !important;
+  order: 0 !important;
+  transform: none !important;
+}
+
+/* --- ACCIONES Y SUBIDA DE ARCHIVOS --- */
+
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.custom-file-upload input[type="file"] {
+  display: none;
+}
+
+.file-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #2a2a2a;
+  color: #bbb;
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: 1px solid #444;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.file-label:hover {
+  background-color: #3d2b56;
+  color: #fff;
+}
+
+.submit-btn {
+  background: #2b804e;
+  color: white;
+  border: none;
+  padding: 10px 25px;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.submit-btn:hover {
+  background: #34a853;
+}
+
+.submit-btn:disabled {
+  background: #555;
+  cursor: not-allowed;
+}
+
+/* Preview de imagen */
+.image-preview-container {
+  position: relative;
+  width: fit-content;
+}
+
+.image-preview { 
+  width: 120px; 
+  border-radius: 4px; 
+  border: 1px solid #444;
+}
+
+.remove-preview {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #ff4444;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
+.close-btn {
+  background: transparent;
+  border: none;
+  color: #888;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 5px;
+  line-height: 1;
+  transition: all 0.2s ease;
+  border-radius: 4px;
+}
+
+.close-btn:hover {
+  background-color: rgba(255, 68, 68, 0.1); /* Un fondo rojo muy sutil */
+  color: #ff4444; /* El ícono se pone rojo brillante */
+  transform: scale(1.1);
+}
+
+.close-btn:active {
+  transform: scale(0.9);
+}

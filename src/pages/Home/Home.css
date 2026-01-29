@@ -1,0 +1,87 @@
+/* Home.css */
+
+.home-container {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 0 1.5rem;
+}
+
+/* Encabezado: Título + Botón de Nuevo Hilo */
+.home-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2.5rem;
+}
+
+.home-header h1 {
+  font-size: 2rem;
+  color: var(--text-main);
+  margin: 0;
+}
+
+/* Lista de hilos */
+.threads-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+/* Estilo de la Card (Neón) */
+.home-thread-card {
+  background: var(--bg-card);
+  padding: 1.8rem;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  text-decoration: none; /* Por si toda la card es un link */
+}
+
+.home-thread-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--primary);
+  box-shadow: 0 10px 30px rgba(139, 92, 246, 0.15);
+}
+
+.home-thread-title {
+  margin: 0 0 0.8rem 0;
+  color: var(--primary-hover);
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.home-thread-excerpt {
+  color: var(--text-dim);
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 1.2rem;
+}
+
+/* Footer de la Card: Autor y Fecha */
+.home-thread-footer {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.85rem;
+}
+
+.home-author-badge {
+  color: var(--primary);
+  font-weight: 600;
+  background: rgba(139, 92, 246, 0.1);
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+.home-date-badge {
+  color: #64748b;
+}
+
+/* Pantalla de carga y error */
+.loading-screen, .empty-state {
+  text-align: center;
+  padding: 3rem;
+  color: var(--text-dim);
+}

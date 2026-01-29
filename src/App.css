@@ -1,0 +1,46 @@
+/* App.css */
+
+/* Contenedor principal para todas las páginas */
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+/* Animación de carga global */
+.loading-screen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 70vh;
+  color: var(--primary);
+  font-size: 1.2rem;
+  font-weight: bold;
+  letter-spacing: 2px;
+}
+
+/* Estilo para los botones neón que uses fuera de componentes específicos */
+.btn-neon {
+  background-color: var(--primary);
+  color: white;
+  padding: 10px 22px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 700;
+  text-decoration: none;
+  display: inline-block;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 14px rgba(139, 92, 246, 0.3);
+}
+
+.btn-neon:hover {
+  background-color: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(139, 92, 246, 0.5);
+}
+
+/* Utilidad para centrar textos */
+.text-center {
+  text-align: center;
+}
