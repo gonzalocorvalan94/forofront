@@ -3,19 +3,13 @@ import { useParams } from 'react-router-dom';
 import api from '../../api/axios';
 import './ThreadDetail.css';
 
-// --- COMPONENTE HIJO (AFUERA PARA EVITAR RESET DEL CURSOR) ---
+// 1. DEFINIMOS LA URL DE TU BACKEND EN RENDER
+const API_BASE_URL = 'https://foro-yes1.onrender.com';
+
+// --- COMPONENTE HIJO ---
 const ReplyForm = ({ 
-  title, 
-  isClosing, 
-  content, 
-  setContent, 
-  onSubmit, 
-  submitting, 
-  handleImage, 
-  fileRef, 
-  preview, 
-  setPreview, 
-  setImage 
+  title, isClosing, content, setContent, onSubmit, submitting, 
+  handleImage, fileRef, preview, setPreview, setImage 
 }) => (
   <form className="reply-form" onSubmit={onSubmit}>
     <div className="form-header">
@@ -40,16 +34,12 @@ const ReplyForm = ({
             setPreview(null); 
             if(fileRef.current) fileRef.current.value = ""; 
           }}
-        >
-          ✕
-        </button>
+        >✕</button>
       </div>
     )}
     <div className="form-actions">
       <div className="custom-file-upload">
-        <label htmlFor="file-upload" className="file-label">
-           Adjuntar imagen
-        </label>
+        <label htmlFor="file-upload" className="file-label">Adjuntar imagen</label>
         <input 
           type="file" 
           accept="image/*" 
@@ -71,7 +61,6 @@ const ThreadDetail = () => {
   const fileInputRef = useRef(null);
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
-
   const [showMainForm, setShowMainForm] = useState(false);
   const [replyContent, setReplyContent] = useState('');
   const [image, setImage] = useState(null); 
@@ -148,6 +137,7 @@ const ThreadDetail = () => {
       <div className="replies-section">
         <h3>Respuestas ({data.replies.length})</h3>
         {data.replies.map((reply) => {
+          // 2. NORMALIZAMOS EL PATH DE LA IMAGEN
           const imgPath = reply.Image_url || reply.image_url;
           const isThisReplying = replyingTo?.id === reply.ID;
 
@@ -156,9 +146,16 @@ const ThreadDetail = () => {
               <div className={`reply-card ${reply.parent_reply_id ? 'nested' : ''}`}>
                 <div className="reply-body">
                   <p className="reply-text">{reply.Content}</p>
+                  
+                  {/* 3. CONSTRUCCIÓN CORRECTA DE LA URL */}
                   {imgPath && (
                     <div className="reply-image-wrapper">
-                      <img src={`https://foro-yes1.onrender.com`} alt="Adjunto" className="reply-attachment" />
+                      <img 
+                        src={`${API_BASE_URL}${imgPath}`} 
+                        alt="Adjunto" 
+                        className="reply-attachment" 
+                        onError={(e) => e.target.style.display = 'none'} // Si falla, que no se vea el icono roto
+                      />
                     </div>
                   )}
                 </div>
@@ -202,7 +199,7 @@ const ThreadDetail = () => {
       <div className="main-reply-wrapper">
         {!showMainForm && !replyingTo ? (
           <button className="open-form-btn" onClick={() => setShowMainForm(true)}>
-            + Responder al Hilo000
+            + Responder al Hilo
           </button>
         ) : (
           !replyingTo && (
