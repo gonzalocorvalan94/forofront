@@ -13,10 +13,11 @@ const CreateThread = () => {
   try {
     // Mandamos todo en minúsculas para que el controlador lo reciba bien
     await api.post('/threads', { 
-      title: title, 
-      content: content, 
-      categoryId: 1 // <--- Agregamos esto para cumplir con el NOT NULL de la DB
-    }); 
+  Title: title,          // Con T mayúscula si tu DB es estricta
+  Content: content,      // Con C mayúscula
+  category_id: 2,        // El ID real que te dio el SELECT (ID 2)
+  user_id: 5             // ¡OJO! Acá tenés que poner un ID de un usuario que exista en TiDB
+});
     navigate('/'); 
   } catch (error) {
     console.error('Error al crear hilo:', error.response?.data);
