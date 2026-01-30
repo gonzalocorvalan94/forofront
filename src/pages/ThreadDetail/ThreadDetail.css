@@ -16,7 +16,16 @@
   margin-bottom: 30px;
   border-left: 4px solid #6a0dad;
 }
-
+.open-form-btn {
+  background: #6a0dad;
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 20px;
+  cursor: pointer;
+  margin: 20px auto;
+  display: block;
+}
 /* --- RESPUESTAS --- */
 .reply-group {
   margin-bottom: 25px;
