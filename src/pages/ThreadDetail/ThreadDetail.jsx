@@ -202,7 +202,7 @@ const ThreadDetail = () => {
       <div className="main-reply-wrapper">
         {!showMainForm && !replyingTo ? (
           <button className="open-form-btn" onClick={() => setShowMainForm(true)}>
-            + Responder al Hilo
+            + Responder al Hilo000
           </button>
         ) : (
           !replyingTo && (
