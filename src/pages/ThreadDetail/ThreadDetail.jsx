@@ -158,7 +158,7 @@ const ThreadDetail = () => {
                   <p className="reply-text">{reply.Content}</p>
                   {imgPath && (
                     <div className="reply-image-wrapper">
-                      <img src={`http://localhost:3000${imgPath}`} alt="Adjunto" className="reply-attachment" />
+                      <img src={`https://foro-yes1.onrender.com`} alt="Adjunto" className="reply-attachment" />
                     </div>
                   )}
                 </div>
