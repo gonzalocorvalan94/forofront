@@ -10,6 +10,7 @@ const CreateThread = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+     console.log('Enviando:', { title, content, categoryId: 2 });
     try {
       await api.post('/threads', {
         title,
