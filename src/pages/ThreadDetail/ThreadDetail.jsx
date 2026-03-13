@@ -1,10 +1,23 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import api from '../../api/axios';
 import './ThreadDetail.css';
 
-// 1. DEFINIMOS LA URL DE TU BACKEND EN RENDER
 const API_BASE_URL = 'https://foro-yes1.onrender.com';
+
+// --- MODAL DE CONFIRMACIÓN ---
+const ConfirmModal = ({ message, onConfirm, onCancel }) => (
+  <div className="modal-overlay">
+    <div className="modal-card">
+      <p>{message}</p>
+      <div className="modal-actions">
+        <button className="btn-confirm-delete" onClick={onConfirm}>Sí, eliminar</button>
+        <button className="btn-cancel" onClick={onCancel}>Cancelar</button>
+      </div>
+    </div>
+  </div>
+);
 
 // --- COMPONENTE HIJO ---
 const ReplyForm = ({ 
@@ -58,7 +71,10 @@ const ReplyForm = ({
 // --- COMPONENTE PRINCIPAL ---
 const ThreadDetail = () => {
   const { threadId } = useParams();
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const fileInputRef = useRef(null);
+
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showMainForm, setShowMainForm] = useState(false);
@@ -67,6 +83,10 @@ const ThreadDetail = () => {
   const [previewUrl, setPreviewUrl] = useState(null); 
   const [replyingTo, setReplyingTo] = useState(null); 
   const [submitting, setSubmitting] = useState(false);
+
+  // Estado del modal de confirmación
+  const [confirm, setConfirm] = useState(null); 
+  // confirm = { message, onConfirm } o null
 
   const fetchThread = useCallback(async () => {
     try {
@@ -121,15 +141,75 @@ const ThreadDetail = () => {
     }
   };
 
+  // --- ELIMINAR HILO ---
+  const handleDeleteThread = () => {
+    setConfirm({
+      message: '¿Estás seguro que deseas eliminar este hilo? Esta acción no se puede deshacer.',
+      onConfirm: async () => {
+        try {
+          await api.delete(`/threads/${threadId}`);
+          navigate('/');
+        } catch (error) {
+          console.error('Error al eliminar el hilo:', error);
+        } finally {
+          setConfirm(null);
+        }
+      }
+    });
+  };
+
+  // --- ELIMINAR COMENTARIO ---
+  const handleDeleteReply = (replyId) => {
+    setConfirm({
+      message: '¿Estás seguro que deseas eliminar este comentario?',
+      onConfirm: async () => {
+        try {
+          await api.delete(`/threads/replies/${replyId}`);
+          fetchThread();
+        } catch (error) {
+          console.error('Error al eliminar el comentario:', error);
+        } finally {
+          setConfirm(null);
+        }
+      }
+    });
+  };
+
+  // --- PERMISOS ---
+  const canDeleteThread = () => {
+    if (!user || !data) return false;
+    return user.id === data.thread.user_id || user.role === 'admin';
+  };
+
+  const canDeleteReply = (reply) => {
+    if (!user) return false;
+    return user.id === reply.user_id || user.role === 'admin';
+  };
+
   if (loading) return <div className="loading-screen">Cargando...</div>;
   if (!data) return <div className="error">Hilo no encontrado.</div>;
 
   return (
     <div className="thread-detail-container">
+
+      {/* MODAL */}
+      {confirm && (
+        <ConfirmModal
+          message={confirm.message}
+          onConfirm={confirm.onConfirm}
+          onCancel={() => setConfirm(null)}
+        />
+      )}
+
       <article className="main-thread">
         <h1>{data.thread.Title}</h1>
         <div className="thread-meta">
-           <span>Por: <strong>{data.thread.authorName}</strong></span>
+          <span>Por: <strong>{data.thread.authorName}</strong></span>
+          {canDeleteThread() && (
+            <button className="btn-delete" onClick={handleDeleteThread}>
+              Eliminar hilo
+            </button>
+          )}
         </div>
         <p className="thread-content">{data.thread.Content}</p>
       </article>
@@ -137,7 +217,6 @@ const ThreadDetail = () => {
       <div className="replies-section">
         <h3>Respuestas ({data.replies.length})</h3>
         {data.replies.map((reply) => {
-          // 2. NORMALIZAMOS EL PATH DE LA IMAGEN
           const imgPath = reply.Image_url || reply.image_url;
           const isThisReplying = replyingTo?.id === reply.ID;
 
@@ -147,30 +226,39 @@ const ThreadDetail = () => {
                 <div className="reply-body">
                   <p className="reply-text">{reply.Content}</p>
                   
-                  {/* 3. CONSTRUCCIÓN CORRECTA DE LA URL */}
                   {imgPath && (
                     <div className="reply-image-wrapper">
                       <img 
                         src={`${API_BASE_URL}${imgPath}`} 
                         alt="Adjunto" 
                         className="reply-attachment" 
-                        onError={(e) => e.target.style.display = 'none'} // Si falla, que no se vea el icono roto
+                        onError={(e) => e.target.style.display = 'none'}
                       />
                     </div>
                   )}
                 </div>
                 <div className="reply-footer">
                   <small>Por: <strong>{reply.authorName}</strong></small>
-                  <button
-                    className="reply-btn-small"
-                    onClick={() => {
-                      setReplyingTo({ id: reply.ID, user: reply.authorName });
-                      setShowMainForm(false);
-                      setReplyContent('');
-                    }}
-                  >
-                    Responder
-                  </button>
+                  <div className="reply-actions">
+                    <button
+                      className="reply-btn-small"
+                      onClick={() => {
+                        setReplyingTo({ id: reply.ID, user: reply.authorName });
+                        setShowMainForm(false);
+                        setReplyContent('');
+                      }}
+                    >
+                      Responder
+                    </button>
+                    {canDeleteReply(reply) && (
+                      <button
+                        className="btn-delete-small"
+                        onClick={() => handleDeleteReply(reply.ID)}
+                      >
+                        Eliminar
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
               
