@@ -116,10 +116,11 @@
   background: #3d2b56;
   color: white;
   border: none;
-  padding: 6px 14px;
-  border-radius: 4px;
+  padding: 6px 16px;
+  border-radius: 6px;
   cursor: pointer;
   font-size: 0.85rem;
+  font-weight: 500;
   transition: background 0.2s;
 }
 
@@ -132,10 +133,11 @@
   background: transparent;
   color: #e74c3c;
   border: 1px solid #e74c3c;
-  padding: 5px 14px;
+  padding: 5px 16px;
   border-radius: 6px;
   cursor: pointer;
   font-size: 0.85rem;
+  font-weight: 500;
   transition: all 0.2s;
 }
 
@@ -148,16 +150,18 @@
   background: transparent;
   color: #e74c3c;
   border: 1px solid #e74c3c;
-  padding: 4px 10px;
-  border-radius: 4px;
+  padding: 6px 16px;
+  border-radius: 6px;
   cursor: pointer;
-  font-size: 0.82rem;
+  font-size: 0.85rem;
+  font-weight: 500;
   transition: all 0.2s;
 }
 
 .btn-delete-small:hover {
   background: #e74c3c;
   color: white;
+  border-color: #e74c3c;
 }
 
 /* --- MODAL DE CONFIRMACIÓN --- */
