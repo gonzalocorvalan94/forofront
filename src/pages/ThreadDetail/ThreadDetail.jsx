@@ -83,6 +83,7 @@ const ThreadDetail = () => {
   const [previewUrl, setPreviewUrl] = useState(null); 
   const [replyingTo, setReplyingTo] = useState(null); 
   const [submitting, setSubmitting] = useState(false);
+  const [removingId, setRemovingId] = useState(null);
 
   // Estado del modal de confirmación
   const [confirm, setConfirm] = useState(null); 
@@ -160,20 +161,22 @@ const ThreadDetail = () => {
 
   // --- ELIMINAR COMENTARIO ---
   const handleDeleteReply = (replyId) => {
-    setConfirm({
-      message: '¿Estás seguro que deseas eliminar este comentario?',
-      onConfirm: async () => {
-        try {
-          await api.delete(`/threads/replies/${replyId}`);
-          fetchThread();
-        } catch (error) {
-          console.error('Error al eliminar el comentario:', error);
-        } finally {
-          setConfirm(null);
-        }
+  setConfirm({
+    message: '¿Estás seguro que deseas eliminar este comentario?',
+    onConfirm: async () => {
+      setConfirm(null);
+      setRemovingId(replyId); // ← arranca la animación
+      await new Promise(resolve => setTimeout(resolve, 400)); // ← espera que termine
+      try {
+        await api.delete(`/threads/replies/${replyId}`);
+        fetchThread();
+      } catch (error) {
+        console.error('Error al eliminar el comentario:', error);
+        setRemovingId(null);
       }
-    });
-  };
+    }
+  });
+};
 
   // --- PERMISOS ---
   const canDeleteThread = () => {
@@ -223,7 +226,7 @@ const ThreadDetail = () => {
           const isThisReplying = replyingTo?.id === reply.ID;
 
           return (
-            <div key={reply.ID} className="reply-group">
+            <div key={reply.ID} className={`reply-group ${removingId === reply.ID ? 'removing' : ''}`}>
               <div className={`reply-card ${reply.parent_reply_id ? 'nested' : ''}`}>
                 <div className="reply-body">
                   <p className="reply-text">{reply.Content}</p>
