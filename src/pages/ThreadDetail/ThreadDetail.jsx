@@ -182,9 +182,11 @@ const ThreadDetail = () => {
   };
 
   const canDeleteReply = (reply) => {
-    if (!user) return false;
-    return user.id === reply.user_id || user.role === 'admin';
-  };
+  if (!user) return false;
+  console.log('user completo:', user);
+  console.log('reply completo:', reply);
+  return user.id === reply.user_id || user.role === 'admin';
+};
 
   if (loading) return <div className="loading-screen">Cargando...</div>;
   if (!data) return <div className="error">Hilo no encontrado.</div>;
