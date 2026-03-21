@@ -2,14 +2,14 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../api/axios.js';
-import './RegisterPage.css'
+import './RegisterPage.css';
 
 const RegisterPage = () => {
   const [formData, setFormData] = useState({
     username: '',
     email: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -29,12 +29,23 @@ const RegisterPage = () => {
     }
 
     setLoading(true);
+    if (formData.username.length < 4) {
+      return setError('El nombre de usuario debe tener al menos 4 caracteres');
+    }
+
+    if (formData.password.length < 6) {
+      return setError('La contraseña debe tener al menos 6 caracteres');
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      return setError('Las contraseñas no coinciden');
+    }
     try {
       // 1. Registramos
       await api.post('/auth/register', {
         username: formData.username,
         email: formData.email,
-        password: formData.password
+        password: formData.password,
       });
 
       // 2. Auto-login con las mismas credenciales
@@ -54,42 +65,42 @@ const RegisterPage = () => {
       <div className="register-card">
         <form onSubmit={handleSubmit}>
           <h2>Crear Cuenta</h2>
-          
+
           {error && <p className="error-message">{error}</p>}
 
-          <input 
+          <input
             name="username"
-            placeholder="Nombre de usuario" 
+            placeholder="Nombre de usuario"
             onChange={handleChange}
             disabled={loading}
-            required 
+            required
           />
 
-          <input 
+          <input
             name="email"
-            type="email" 
-            placeholder="Correo electrónico" 
+            type="email"
+            placeholder="Correo electrónico"
             onChange={handleChange}
             disabled={loading}
-            required 
+            required
           />
 
-          <input 
+          <input
             name="password"
-            type="password" 
-            placeholder="Contraseña" 
+            type="password"
+            placeholder="Contraseña"
             onChange={handleChange}
             disabled={loading}
-            required 
+            required
           />
 
-          <input 
+          <input
             name="confirmPassword"
-            type="password" 
-            placeholder="Confirmar contraseña" 
+            type="password"
+            placeholder="Confirmar contraseña"
             onChange={handleChange}
             disabled={loading}
-            required 
+            required
           />
 
           <button type="submit" className="btn-register" disabled={loading}>
@@ -102,9 +113,12 @@ const RegisterPage = () => {
               'Registrarse'
             )}
           </button>
-          
+
           <p className="register-footer">
-            ¿Ya tienes cuenta? <Link to="/login" className="register-link">Inicia sesión</Link>
+            ¿Ya tienes cuenta?{' '}
+            <Link to="/login" className="register-link">
+              Inicia sesión
+            </Link>
           </p>
         </form>
       </div>
