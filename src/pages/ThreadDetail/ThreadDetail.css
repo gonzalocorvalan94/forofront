@@ -250,9 +250,8 @@
 .nested-form-container {
   margin-left: 40px;
   margin-top: 10px;
-  margin-bottom: 16px; /* ← agregá esto */
-  position: relative;
-  z-index: 10; /* ← y esto */
+  margin-bottom: 16px;
+  position: relative; /* ← sacá el z-index */
 }
 
 .reply-form {
@@ -263,7 +262,7 @@
   display: flex;
   flex-direction: column;
   gap: 15px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5); /* ← sombra para separarlo visualmente */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
 }
 
 .form-header {
@@ -414,9 +413,10 @@ textarea {
 
 .reply-group {
   transition: opacity 0.4s ease, transform 0.4s ease, max-height 0.4s ease;
-  max-height: 500px;
+  max-height: 2000px; /* ← aumentá este valor para que el formulario no quede cortado */
   opacity: 1;
   transform: translateX(0);
+  margin-bottom: 16px; /* ← agregá esto */
 }
 
 .reply-group.removing {
