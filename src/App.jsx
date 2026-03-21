@@ -7,6 +7,7 @@ import {
 import { useAuth } from './context/AuthContext';
 import './index.css';
 import './App.css';
+import ForgotPassword from './pages/ForgotPassword/ForgotPassword';
 
 import Home from './pages/Home/Home';
 import CategoriesPage from './pages/CategoriesPage/CategoriesPage';
@@ -32,7 +33,7 @@ function App() {
           {/* Rutas Públicas */}
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
-
+          <Route path="/forgot-password" element={<ForgotPassword />} />
           {/* Rutas Privadas */}
           <Route
             path="/"

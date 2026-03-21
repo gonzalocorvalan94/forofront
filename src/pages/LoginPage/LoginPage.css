@@ -113,3 +113,18 @@
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
+
+.forgot-password-link {
+  text-align: center;
+  margin-top: 8px;
+}
+
+.forgot-password-link a {
+  color: #6a0dad;
+  text-decoration: none;
+  font-size: 0.85rem;
+}
+
+.forgot-password-link a:hover {
+  text-decoration: underline;
+}

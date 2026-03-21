@@ -115,3 +115,28 @@
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
+
+.security-question-section {
+  margin-bottom: 8px;
+}
+
+.security-question-label {
+  color: #888;
+  font-size: 0.85rem;
+  margin-bottom: 4px;
+}
+
+.security-question-text {
+  color: #e0e0e0;
+  font-weight: 500;
+  margin-bottom: 10px;
+  font-size: 0.95rem;
+}
+
+.security-hint {
+  color: #666;
+  font-size: 0.8rem;
+  display: block;
+  margin-top: 4px;
+  margin-bottom: 8px;
+}

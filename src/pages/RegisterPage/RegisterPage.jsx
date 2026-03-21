@@ -4,13 +4,32 @@ import { useAuth } from '../../context/AuthContext';
 import api from '../../api/axios.js';
 import './RegisterPage.css';
 
+const SECURITY_QUESTIONS = [
+  '¿Cuál es el nombre de tu mascota?',
+  '¿En qué ciudad naciste?',
+  '¿Cuál es el nombre de tu mejor amigo/a de la infancia?',
+  '¿Cuál es tu comida favorita?',
+  '¿Cuál es el apodo que te puso tu familia?',
+  '¿Cuál es tu película favorita?',
+  '¿Cuál es el nombre de tu canción favorita?',
+  '¿Cuál es tu deporte favorito?',
+  '¿Cuál es tu color favorito?',
+  '¿Cuál es el nombre de tu actor o actriz favorito/a?',
+];
+
+// Elige una pregunta aleatoria al cargar el componente
+const getRandomQuestion = () =>
+  SECURITY_QUESTIONS[Math.floor(Math.random() * SECURITY_QUESTIONS.length)];
+
 const RegisterPage = () => {
   const [formData, setFormData] = useState({
     username: '',
     email: '',
     password: '',
     confirmPassword: '',
+    securityAnswer: '',
   });
+  const [securityQuestion] = useState(getRandomQuestion);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -24,7 +43,6 @@ const RegisterPage = () => {
     e.preventDefault();
     setError('');
 
-    // Todas las validaciones ANTES de setLoading
     if (formData.username.length < 4) {
       return setError('El nombre de usuario debe tener al menos 4 caracteres');
     }
@@ -37,12 +55,22 @@ const RegisterPage = () => {
       return setError('Las contraseñas no coinciden');
     }
 
-    setLoading(true); // ← recién acá
+    if (formData.securityAnswer.trim().includes(' ')) {
+      return setError('La respuesta debe ser una sola palabra');
+    }
+
+    if (!formData.securityAnswer.trim()) {
+      return setError('Por favor respondé la pregunta de seguridad');
+    }
+
+    setLoading(true);
     try {
       await api.post('/auth/register', {
         username: formData.username,
         email: formData.email,
         password: formData.password,
+        securityQuestion,
+        securityAnswer: formData.securityAnswer.trim().toLowerCase(),
       });
 
       await login(formData.email, formData.password);
@@ -96,6 +124,21 @@ const RegisterPage = () => {
             disabled={loading}
             required
           />
+
+          <div className="security-question-section">
+            <p className="security-question-label">Pregunta de seguridad:</p>
+            <p className="security-question-text">{securityQuestion}</p>
+            <input
+              name="securityAnswer"
+              placeholder="Tu respuesta (una sola palabra)"
+              onChange={handleChange}
+              disabled={loading}
+              required
+            />
+            <small className="security-hint">
+              Usá una sola palabra. No distingue mayúsculas.
+            </small>
+          </div>
 
           <button type="submit" className="btn-register" disabled={loading}>
             {loading ? (

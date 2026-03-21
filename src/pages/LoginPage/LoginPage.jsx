@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import './LoginPage.css'
+import './LoginPage.css';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  
+
   const { login } = useAuth();
   const navigate = useNavigate();
 
@@ -21,7 +21,8 @@ const LoginPage = () => {
       await login(email, password);
       navigate('/');
     } catch (err) {
-      const message = err.response?.data?.message || 'Error al conectar con el servidor';
+      const message =
+        err.response?.data?.message || 'Error al conectar con el servidor';
       setError(message);
     } finally {
       setLoading(false);
@@ -33,25 +34,25 @@ const LoginPage = () => {
       <div className="login-card">
         <form onSubmit={handleSubmit}>
           <h2>Iniciar Sesión</h2>
-          
+
           {error && <p className="error-message">{error}</p>}
 
-          <input 
-            type="email" 
-            placeholder="Correo electrónico" 
+          <input
+            type="email"
+            placeholder="Correo electrónico"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             disabled={loading}
-            required 
+            required
           />
 
-          <input 
-            type="password" 
-            placeholder="Contraseña" 
+          <input
+            type="password"
+            placeholder="Contraseña"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             disabled={loading}
-            required 
+            required
           />
 
           <button type="submit" className="btn-login" disabled={loading}>
@@ -64,7 +65,11 @@ const LoginPage = () => {
               'Entrar'
             )}
           </button>
-          
+
+          <p className="forgot-password-link">
+            <Link to="/forgot-password">¿Olvidaste tu contraseña?</Link>
+          </p>
+
           <p className="login-footer">
             Usa tus credenciales de alumno para acceder al foro.
           </p>
