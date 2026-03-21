@@ -28,7 +28,10 @@ const Home = () => {
     <div className="home-container">
       <header className="home-header">
         <h1>Hilos</h1>
-        <Link to="/create-thread" className="btn-neon">
+        <Link
+          to={`/create-thread?categoryId=${categoryId}`}
+          className="btn-neon"
+        >
           + Nuevo Hilo
         </Link>
       </header>
