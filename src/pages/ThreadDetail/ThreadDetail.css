@@ -421,3 +421,7 @@ textarea {
   max-height: 0;
   overflow: hidden;
 }
+
+.children-container {
+  margin-left: 20px;
+}

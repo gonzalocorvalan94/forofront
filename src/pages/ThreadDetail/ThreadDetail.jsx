@@ -68,6 +68,130 @@ const ReplyForm = ({
   </form>
 );
 
+// --- FUNCIÓN PARA CONSTRUIR ÁRBOL DE REPLIES ---
+const buildReplyTree = (replies) => {
+  const map = {};
+  const roots = [];
+
+  // Primero indexamos todos los replies por ID
+  replies.forEach(reply => {
+    map[reply.ID] = { ...reply, children: [] };
+  });
+
+  // Luego los organizamos en árbol
+  replies.forEach(reply => {
+    if (reply.parent_reply_id && map[reply.parent_reply_id]) {
+      map[reply.parent_reply_id].children.push(map[reply.ID]);
+    } else {
+      roots.push(map[reply.ID]);
+    }
+  });
+
+  return roots;
+};
+
+// --- COMPONENTE REPLY RECURSIVO ---
+const ReplyItem = ({ 
+  reply, depth, replyingTo, setReplyingTo, setShowMainForm, setReplyContent,
+  handleDeleteReply, canDeleteReply, removingId, replyContent, setContent,
+  handleReplySubmit, submitting, handleImageChange, fileInputRef, previewUrl,
+  setPreviewUrl, setImage
+}) => {
+  const imgPath = reply.Image_url || reply.image_url;
+  const isThisReplying = replyingTo?.id === reply.ID;
+
+  return (
+    <div className={`reply-group ${removingId === reply.ID ? 'removing' : ''}`}>
+      <div className={`reply-card ${depth > 0 ? 'nested' : ''}`}>
+        <div className="reply-body">
+          <p className="reply-text">{reply.Content}</p>
+          {imgPath && (
+            <div className="reply-image-wrapper">
+              <img 
+                src={`${API_BASE_URL}${imgPath}`} 
+                alt="Adjunto" 
+                className="reply-attachment" 
+                onError={(e) => e.target.style.display = 'none'}
+              />
+            </div>
+          )}
+        </div>
+        <div className="reply-footer">
+          <small>Por: <strong>{reply.authorName}</strong></small>
+          <div className="reply-actions">
+            <button
+              className="reply-btn-small"
+              onClick={() => {
+                setReplyingTo({ id: reply.ID, user: reply.authorName });
+                setShowMainForm(false);
+                setReplyContent('');
+              }}
+            >
+              Responder
+            </button>
+            {canDeleteReply(reply) && (
+              <button
+                className="btn-delete-small"
+                onClick={() => handleDeleteReply(reply.ID)}
+              >
+                Eliminar
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Formulario justo debajo del reply al que respondemos */}
+      {isThisReplying && (
+        <div className="nested-form-container">
+          <ReplyForm 
+            title={`Respondiendo a ${replyingTo.user}`} 
+            isClosing={() => setReplyingTo(null)}
+            content={replyContent}
+            setContent={setContent}
+            onSubmit={handleReplySubmit}
+            submitting={submitting}
+            handleImage={handleImageChange}
+            fileRef={fileInputRef}
+            preview={previewUrl}
+            setPreview={setPreviewUrl}
+            setImage={setImage}
+          />
+        </div>
+      )}
+
+      {/* Replies hijos recursivamente */}
+      {reply.children?.length > 0 && (
+        <div className="children-container">
+          {reply.children.map(child => (
+            <ReplyItem
+              key={child.ID}
+              reply={child}
+              depth={depth + 1}
+              replyingTo={replyingTo}
+              setReplyingTo={setReplyingTo}
+              setShowMainForm={setShowMainForm}
+              setReplyContent={setReplyContent}
+              handleDeleteReply={handleDeleteReply}
+              canDeleteReply={canDeleteReply}
+              removingId={removingId}
+              replyContent={replyContent}
+              setContent={setContent}
+              handleReplySubmit={handleReplySubmit}
+              submitting={submitting}
+              handleImageChange={handleImageChange}
+              fileInputRef={fileInputRef}
+              previewUrl={previewUrl}
+              setPreviewUrl={setPreviewUrl}
+              setImage={setImage}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
 // --- COMPONENTE PRINCIPAL ---
 const ThreadDetail = () => {
   const { threadId } = useParams();
@@ -84,10 +208,7 @@ const ThreadDetail = () => {
   const [replyingTo, setReplyingTo] = useState(null); 
   const [submitting, setSubmitting] = useState(false);
   const [removingId, setRemovingId] = useState(null);
-
-  // Estado del modal de confirmación
   const [confirm, setConfirm] = useState(null); 
-  // confirm = { message, onConfirm } o null
 
   const fetchThread = useCallback(async () => {
     try {
@@ -142,7 +263,6 @@ const ThreadDetail = () => {
     }
   };
 
-  // --- ELIMINAR HILO ---
   const handleDeleteThread = () => {
     setConfirm({
       message: '¿Estás seguro que deseas eliminar este hilo? Esta acción no se puede deshacer.',
@@ -159,45 +279,42 @@ const ThreadDetail = () => {
     });
   };
 
-  // --- ELIMINAR COMENTARIO ---
   const handleDeleteReply = (replyId) => {
-  setConfirm({
-    message: '¿Estás seguro que deseas eliminar este comentario?',
-    onConfirm: async () => {
-      setConfirm(null);
-      setRemovingId(replyId); // ← arranca la animación
-      await new Promise(resolve => setTimeout(resolve, 400)); // ← espera que termine
-      try {
-        await api.delete(`/threads/replies/${replyId}`);
-        fetchThread();
-      } catch (error) {
-        console.error('Error al eliminar el comentario:', error);
-        setRemovingId(null);
+    setConfirm({
+      message: '¿Estás seguro que deseas eliminar este comentario?',
+      onConfirm: async () => {
+        setConfirm(null);
+        setRemovingId(replyId);
+        await new Promise(resolve => setTimeout(resolve, 400));
+        try {
+          await api.delete(`/threads/replies/${replyId}`);
+          fetchThread();
+        } catch (error) {
+          console.error('Error al eliminar el comentario:', error);
+          setRemovingId(null);
+        }
       }
-    }
-  });
-};
+    });
+  };
 
-  // --- PERMISOS ---
   const canDeleteThread = () => {
     if (!user || !data) return false;
     return user.id === data.thread.user_id || user.role === 'admin';
   };
 
   const canDeleteReply = (reply) => {
-  if (!user) return false;
-  console.log('user completo:', user);
-  console.log('reply completo:', reply);
-  return user.id === reply.user_id || user.role === 'admin';
-};
+    if (!user) return false;
+    return user.id === reply.user_id || user.role === 'admin';
+  };
 
   if (loading) return <div className="loading-screen">Cargando...</div>;
   if (!data) return <div className="error">Hilo no encontrado.</div>;
 
+  const replyTree = buildReplyTree(data.replies);
+
   return (
     <div className="thread-detail-container">
 
-      {/* MODAL */}
       {confirm && (
         <ConfirmModal
           message={confirm.message}
@@ -221,72 +338,29 @@ const ThreadDetail = () => {
 
       <div className="replies-section">
         <h3>Respuestas ({data.replies.length})</h3>
-        {data.replies.map((reply) => {
-          const imgPath = reply.Image_url || reply.image_url;
-          const isThisReplying = replyingTo?.id === reply.ID;
-
-          return (
-            <div key={reply.ID} className={`reply-group ${removingId === reply.ID ? 'removing' : ''}`}>
-              <div className={`reply-card ${reply.parent_reply_id ? 'nested' : ''}`}>
-                <div className="reply-body">
-                  <p className="reply-text">{reply.Content}</p>
-                  
-                  {imgPath && (
-                    <div className="reply-image-wrapper">
-                      <img 
-                        src={`${API_BASE_URL}${imgPath}`} 
-                        alt="Adjunto" 
-                        className="reply-attachment" 
-                        onError={(e) => e.target.style.display = 'none'}
-                      />
-                    </div>
-                  )}
-                </div>
-                <div className="reply-footer">
-                  <small>Por: <strong>{reply.authorName}</strong></small>
-                  <div className="reply-actions">
-                    <button
-                      className="reply-btn-small"
-                      onClick={() => {
-                        setReplyingTo({ id: reply.ID, user: reply.authorName });
-                        setShowMainForm(false);
-                        setReplyContent('');
-                      }}
-                    >
-                      Responder
-                    </button>
-                    {canDeleteReply(reply) && (
-                      <button
-                        className="btn-delete-small"
-                        onClick={() => handleDeleteReply(reply.ID)}
-                      >
-                        Eliminar
-                      </button>
-                    )}
-                  </div>
-                </div>
-              </div>
-              
-              {isThisReplying && (
-                <div className="nested-form-container">
-                  <ReplyForm 
-                    title={`Respondiendo a ${replyingTo.user}`} 
-                    isClosing={() => setReplyingTo(null)}
-                    content={replyContent}
-                    setContent={setReplyContent}
-                    onSubmit={handleReplySubmit}
-                    submitting={submitting}
-                    handleImage={handleImageChange}
-                    fileRef={fileInputRef}
-                    preview={previewUrl}
-                    setPreview={setPreviewUrl}
-                    setImage={setImage}
-                  />
-                </div>
-              )}
-            </div>
-          );
-        })}
+        {replyTree.map(reply => (
+          <ReplyItem
+            key={reply.ID}
+            reply={reply}
+            depth={0}
+            replyingTo={replyingTo}
+            setReplyingTo={setReplyingTo}
+            setShowMainForm={setShowMainForm}
+            setReplyContent={setReplyContent}
+            handleDeleteReply={handleDeleteReply}
+            canDeleteReply={canDeleteReply}
+            removingId={removingId}
+            replyContent={replyContent}
+            setContent={setReplyContent}
+            handleReplySubmit={handleReplySubmit}
+            submitting={submitting}
+            handleImageChange={handleImageChange}
+            fileInputRef={fileInputRef}
+            previewUrl={previewUrl}
+            setPreviewUrl={setPreviewUrl}
+            setImage={setImage}
+          />
+        ))}
       </div>
 
       <div className="main-reply-wrapper">
