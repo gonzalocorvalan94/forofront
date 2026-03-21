@@ -24,11 +24,7 @@ const RegisterPage = () => {
     e.preventDefault();
     setError('');
 
-    if (formData.password !== formData.confirmPassword) {
-      return setError('Las contraseñas no coinciden');
-    }
-
-    setLoading(true);
+    // Todas las validaciones ANTES de setLoading
     if (formData.username.length < 4) {
       return setError('El nombre de usuario debe tener al menos 4 caracteres');
     }
@@ -40,18 +36,16 @@ const RegisterPage = () => {
     if (formData.password !== formData.confirmPassword) {
       return setError('Las contraseñas no coinciden');
     }
+
+    setLoading(true); // ← recién acá
     try {
-      // 1. Registramos
       await api.post('/auth/register', {
         username: formData.username,
         email: formData.email,
         password: formData.password,
       });
 
-      // 2. Auto-login con las mismas credenciales
       await login(formData.email, formData.password);
-
-      // 3. Mandamos al home
       navigate('/');
     } catch (err) {
       setError(err.response?.data?.message || 'Error en el registro');
